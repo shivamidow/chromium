@@ -32,6 +32,7 @@
 #include "third_party/blink/renderer/platform/font_family_names.h"
 #include "third_party/blink/renderer/platform/fonts/font_cache_key.h"
 #include "third_party/blink/renderer/platform/fonts/font_family.h"
+#include "third_party/blink/renderer/platform/fonts/font_language_override.h"
 #include "third_party/blink/renderer/platform/fonts/font_optical_sizing.h"
 #include "third_party/blink/renderer/platform/fonts/font_orientation.h"
 #include "third_party/blink/renderer/platform/fonts/font_palette.h"
@@ -199,6 +200,12 @@ class PLATFORM_EXPORT FontDescription {
   Size GetSize() const {
     return Size(KeywordSize(), SpecifiedSize(), IsAbsoluteSize());
   }
+
+  const FontLanguageOverride& LanguageOverride() const {
+    return language_override_;
+  }
+  FontLanguageOverride& LanguageOverride() { return language_override_; }
+
   float SpecifiedSize() const { return specified_size_; }
   // Returns the result of applying font-size-adjust to the specified size. This
   // is useful as an input to optical sizing and takes zooming out of the
@@ -347,6 +354,9 @@ class PLATFORM_EXPORT FontDescription {
                         bool is_generic_family) const;
 
   void SetFamily(const FontFamily& family) { family_list_ = family; }
+  void SetLanguageOverride(const FontLanguageOverride& language) {
+    language_override_ = language;
+  }
   void SetComputedSize(float s) { computed_size_ = ClampTo<float>(s); }
   void SetSpecifiedSize(float s) { specified_size_ = ClampTo<float>(s); }
   void SetAdjustedSize(float s) { adjusted_size_ = ClampTo<float>(s); }
@@ -507,6 +517,7 @@ class PLATFORM_EXPORT FontDescription {
   float letter_spacing_;
   float word_spacing_;
 
+  FontLanguageOverride language_override_;
   FontSizeAdjust size_adjust_;
 
   // Covers stretch, style, weight.

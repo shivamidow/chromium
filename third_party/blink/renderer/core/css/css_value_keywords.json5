@@ -177,6 +177,11 @@
     "fallback",
     "optional",
 
+    //
+    // font-language-override
+    //
+    //normal
+
     // https://drafts.csswg.org/css-conditional-5/#typedef-supports-font-tech-fn
     "font-tech",
     "font-format",

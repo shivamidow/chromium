@@ -361,6 +361,9 @@ bool CSSPropertyEquality::PropertiesEqual(const PropertyHandle& property,
     case CSSPropertyID::kFontKerning:
       return a.GetFontDescription().GetKerning() ==
              b.GetFontDescription().GetKerning();
+    case CSSPropertyID::kFontLanguageOverride:
+      return a.GetFontDescription().LanguageOverride() ==
+             b.GetFontDescription().LanguageOverride();
     case CSSPropertyID::kFontOpticalSizing:
       return a.GetFontDescription().FontOpticalSizing() ==
              b.GetFontDescription().FontOpticalSizing();

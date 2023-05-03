@@ -86,6 +86,7 @@ class CORE_EXPORT FontBuilder {
   void SetFontSmoothing(FontSmoothingMode);
   void SetVariationSettings(scoped_refptr<FontVariationSettings>);
   void SetVariantPosition(FontDescription::FontVariantPosition);
+  void SetLanguageOverride(const FontLanguageOverride&);
 
   // FIXME: These need to just vend a Font object eventually.
   void UpdateFontDescription(FontDescription&,
@@ -148,6 +149,9 @@ class CORE_EXPORT FontBuilder {
   static FontDescription::FontVariantPosition InitialVariantPosition() {
     return FontDescription::kNormalVariantPosition;
   }
+  static FontLanguageOverride InitialLanguageOverride() {
+    return FontLanguageOverride();
+  }
 
  private:
   void SetFamilyDescription(FontDescription&,
@@ -189,6 +193,7 @@ class CORE_EXPORT FontBuilder {
     kVariationSettings,
     kTextRendering,
     kKerning,
+    kFontLanguageOverride,
     kFontOpticalSizing,
     kFontPalette,
     kFontVariantAlternates,

@@ -801,6 +801,12 @@ FontSelectionValue StyleBuilderConverter::ConvertFontWeight(
       value, state.ParentStyle()->GetFontDescription().Weight());
 }
 
+FontLanguageOverride StyleBuilderConverter::ConvertFontLanguageOverride(
+    StyleResolverState& state,
+    const CSSValue& value) {
+  return FontLanguageOverride();
+}
+
 FontDescription::FontVariantCaps
 StyleBuilderConverterBase::ConvertFontVariantCaps(const CSSValue& value) {
   if (value.IsPendingSystemFontValue()) {

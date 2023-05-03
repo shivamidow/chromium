@@ -278,6 +278,11 @@ void FontBuilder::SetVariantPosition(
   font_description_.SetVariantPosition(variant_position);
 }
 
+void FontBuilder::SetLanguageOverride(const FontLanguageOverride& language) {
+  Set(PropertySetFlag::kFontLanguageOverride);
+  font_description_.SetLanguageOverride(language);
+}
+
 float FontBuilder::GetComputedSizeFromSpecifiedSize(
     FontDescription& font_description,
     float effective_zoom,

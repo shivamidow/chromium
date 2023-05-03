@@ -3586,6 +3586,41 @@ const CSSValue* FontVariantAlternates::CSSValueFromComputedStyleInternal(
   return ComputedStyleUtils::ValueForFontVariantAlternates(style);
 }
 
+const CSSValue* FontLanguageOverride::ParseSingleValue(
+    CSSParserTokenRange& range,
+    const CSSParserContext& context,
+    const CSSParserLocalContext&) const {
+  DCHECK(RuntimeEnabledFeatures::CSSFontLanguageOverrideEnabled());
+  if (range.Peek().Id() == CSSValueID::kNormal) {
+    return css_parsing_utils::ConsumeIdent(range);
+  }
+  return css_parsing_utils::ConsumeString(range);
+}
+
+const CSSValue* FontLanguageOverride::CSSValueFromComputedStyleInternal(
+    const ComputedStyle& style,
+    const LayoutObject*,
+    bool allow_visited_style) const {
+  if (style.Locale().IsNull()) {
+    return CSSIdentifierValue::Create(CSSValueID::kAuto);
+  }
+  // FIXME: Convert OpenType language system <-> ICU locale.
+  return MakeGarbageCollected<CSSStringValue>(style.Locale());
+}
+
+void FontLanguageOverride::ApplyValue(StyleResolverState& state,
+                              const CSSValue& value,
+                              ValueMode) const {
+  if (auto* identifier_value = DynamicTo<CSSIdentifierValue>(value)) {
+    DCHECK_EQ(identifier_value->GetValueID(), CSSValueID::kNormal);
+    state.GetFontBuilder().SetLocale(nullptr);
+  } else {
+    // FIXME: Convert OpenType language system <-> ICU locale.
+    state.GetFontBuilder().SetLocale(
+        LayoutLocale::Get(AtomicString(To<CSSStringValue>(value).Value())));
+  }
+}
+
 namespace {
 
 cssvalue::CSSFontVariationValue* ConsumeFontVariationTag(

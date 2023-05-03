@@ -54,6 +54,7 @@ struct SameSizeAsFontDescription {
   scoped_refptr<FontVariantAlternates> font_variant_alternates_;
   AtomicString locale;
   float sizes[5];
+  FontLanguageOverride language_override_;
   FontSizeAdjust size_adjust_;
   FontSelectionRequest selection_request_;
   FieldsAsUnsignedType bitfields;

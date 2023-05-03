@@ -1124,6 +1124,7 @@
 "font-display"
 "font-family"
 "font-feature-settings"
+"font-language-override"
 "font-max-size"
 "font-min-size"
 "font-optical-sizing"

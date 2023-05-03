@@ -852,6 +852,11 @@
       base_feature: "none",
     },
     {
+      name: "CSSFontLanguageOverride",
+      status: "test",
+      base_feature: "none",
+    },
+    {
       name: "CSSFontSizeAdjust",
       status: "test",
       base_feature: "none",

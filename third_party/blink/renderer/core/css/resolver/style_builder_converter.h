@@ -148,6 +148,8 @@ class StyleBuilderConverter {
                                              const CSSValue&);
   static FontSelectionValue ConvertFontWeight(StyleResolverState&,
                                               const CSSValue&);
+  static FontLanguageOverride ConvertFontLanguageOverride(StyleResolverState&,
+                                                          const CSSValue&);
 
   static FontDescription::FontVariantCaps ConvertFontVariantCaps(
       StyleResolverState&,
