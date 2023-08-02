@@ -74,19 +74,30 @@ AtomicString FontSelector::FamilyNameFromSettings(
   if (font_description.GenericFamily() == FontDescription::kStandardFamily ||
       font_description.GenericFamily() == FontDescription::kWebkitBodyFamily)
     return settings.Standard(script);
-  if (generic_family_name == font_family_names::kSerif)
+  if (generic_family_name == font_family_names::kSerif) {
+    LOG(INFO) << "FontSelector::" << __FUNCTION__ << ": " << settings.Serif(script);
     return settings.Serif(script);
-  if (generic_family_name == font_family_names::kSansSerif)
+  }
+  if (generic_family_name == font_family_names::kSansSerif) {
+    LOG(INFO) << "FontSelector::" << __FUNCTION__ << ": " << settings.SansSerif(script);
     return settings.SansSerif(script);
-  if (generic_family_name == font_family_names::kCursive)
+  }
+  if (generic_family_name == font_family_names::kCursive) {
+    LOG(INFO) << "FontSelector::" << __FUNCTION__ << ": " << settings.Cursive(script);
     return settings.Cursive(script);
-  if (generic_family_name == font_family_names::kFantasy)
+  }
+  if (generic_family_name == font_family_names::kFantasy) {
+    LOG(INFO) << "FontSelector::" << __FUNCTION__ << ": " << settings.Fantasy(script);
     return settings.Fantasy(script);
+  }
   if (generic_family_name == font_family_names::kMonospace)
     return settings.Fixed(script);
-  if (generic_family_name == font_family_names::kWebkitStandard)
+  if (generic_family_name == font_family_names::kWebkitStandard) {
+    LOG(INFO) << "FontSelector::" << __FUNCTION__ << ": " << settings.Standard(script);
     return settings.Standard(script);
+  }
   if (generic_family_name == font_family_names::kMath) {
+    LOG(INFO) << "FontSelector::" << __FUNCTION__ << ": " << settings.Math(script);
     return settings.Math(script);
   }
 #endif  // BUILDFLAG(IS_ANDROID)

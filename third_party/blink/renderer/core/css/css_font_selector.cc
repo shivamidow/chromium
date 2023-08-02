@@ -264,6 +264,7 @@ scoped_refptr<FontData> CSSFontSelector::GetFontData(
 
   scoped_refptr<SimpleFontData> font_data =
       FontCache::Get().GetFontData(request_description, settings_family_name);
+  LOG(INFO) << "CSSFontSelector::" << __FUNCTION__ << ": " << request_description.Family().FamilyName() << ", " << font_family.FamilyName() << " -> " << settings_family_name << ", font_data: " << font_data.get();
   if (font_data && request_description.HasSizeAdjust()) {
     DCHECK(RuntimeEnabledFeatures::CSSFontSizeAdjustEnabled());
     if (auto adjusted_size =

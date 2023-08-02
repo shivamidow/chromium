@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<title>Crash test for using a generic font family and font-size-adjust together.</title>
+<link rel="author" title="ChangSeok Oh" href="mailto:changseok@webkit.org">
+<link rel="help" href="https://crbug.com/1458673">
+<style>
+.fantasy {
+  font-family: fantasy;
+  font-size-adjust: 1.0;
+}
+.cursive {
+  font-family: cursive;
+  font-size-adjust: 1.0;
+}
+.math {
+  font-family: math;
+  font-size-adjust: 1.0;
+}
+.serif{
+  font-family: serif;
+  font-size-adjust: 1.0;
+}
+.sans-serif{
+  font-family: sans-serif;
+  font-size-adjust: 1.0;
+}
+.standard{
+  font-family: -webkit-standard;
+  font-size-adjust: 1.0;
+}
+</style>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>
+<div class="fantasy">Test passes if it does not crash.</div>
+<div class="cursive">Test passes if it does not crash.</div>
+<div class="math">Test passes if it does not crash.</div>
+<div class="serif">Test passes if it does not crash.</div>
+<div class="sans-serif">Test passes if it does not crash.</div>
+<div class="standard">Test passes if it does not crash.</div>

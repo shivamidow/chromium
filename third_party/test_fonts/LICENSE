@@ -1,4 +1,5 @@
 The SIL OPEN FONT LICENSE applies to the following files:
+DancingScript-Regular.otf
 Gelasio-Bold.ttf
 Gelasio-BoldItalic.ttf
 Gelasio-Italic.ttf
@@ -6,6 +7,7 @@ Gelasio-Regular.ttf
 Lohit-Devanagari.ttf
 Lohit-Gurmukhi.ttf
 Lohit-Tamil.ttf
+STIXTwoMath-Regular.ttf
 
 
 Copyright 2011-13 Lohit Fonts Project contributors
@@ -649,6 +651,7 @@ NotoColorEmoji.ttf
 NotoSansCJKjp-Regular.otf
 NotoSansKhmer-Regular.ttf
 NotoSansSymbols2-Regular.ttf
+NotoSerif-Regular.ttf
 
 This Font Software is licensed under the SIL Open Font License,
 Version 1.1.

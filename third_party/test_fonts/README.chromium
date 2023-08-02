@@ -47,6 +47,7 @@ Cousine-Bold.ttf             https://github.com/google/fonts/tree/master/apache/
 Cousine-BoldItalic.ttf       https://github.com/google/fonts/tree/master/apache/cousine
 Cousine-Italic.ttf           https://github.com/google/fonts/tree/master/apache/cousine
 Cousine-Regular.ttf          https://github.com/google/fonts/tree/master/apache/cousine
+DancingScript-Regular.otf    https://github.com/impallari/DancingScript/tree/master/fonts
 DejaVuSans.ttf               https://dejavu-fonts.github.io/Download.html
 GardinerModBug.ttf           See README_GardinerMod.txt
 GardinerModCat.ttf           See README_GardinerMod.txt
@@ -64,6 +65,8 @@ NotoSansCJK-VF.otf.ttc       https://github.com/googlefonts/noto-cjk/tree/main/S
 NotoSansKhmer-Regular.ttf    https://www.google.com/get/noto/#sans-khmr
 NotoSansSymbols2-Regular.ttf https://github.com/googlefonts/noto-fonts/tree/master/hinted/NotoSansSymbols2
 NotoSansTibetan-Regular.ttf  https://github.com/googlefonts/noto-fonts/tree/master/hinted/NotoSansTibetan
+NotoSerif-Regular.ttf        https://github.com/googlefonts/noto-fonts/tree/main/hinted/ttf/NotoSerif
+STIXTwoMath-Regular.ttf      https://github.com/stipub/stixfonts/tree/master/fonts/static_ttf
 Tinos-Bold.ttf               https://github.com/google/fonts/tree/master/apache/tinos
 Tinos-BoldItalic.ttf         https://github.com/google/fonts/tree/master/apache/tinos
 Tinos-Italic.ttf             https://github.com/google/fonts/tree/master/apache/tinos

@@ -289,18 +289,29 @@ void ApplyWebTestDefaultPreferences(blink::web_pref::WebPreferences* prefs) {
   prefs->fantasy_font_family_map[blink::web_pref::kCommonScript] = u"Papyrus";
   prefs->serif_font_family_map[blink::web_pref::kCommonScript] = u"Times";
   prefs->standard_font_family_map[blink::web_pref::kCommonScript] = u"Times";
-#else
+#elif BUILDFLAG(IS_WIN)
   prefs->cursive_font_family_map[blink::web_pref::kCommonScript] =
       u"Comic Sans MS";
   prefs->fantasy_font_family_map[blink::web_pref::kCommonScript] = u"Impact";
   prefs->serif_font_family_map[blink::web_pref::kCommonScript] =
-      u"times new roman";
+      u"Times New Roman";
   prefs->standard_font_family_map[blink::web_pref::kCommonScript] =
-      u"times new roman";
+      u"Times New Roman";
+#else
+  prefs->cursive_font_family_map[blink::web_pref::kCommonScript] =
+      u"Dancing Script";
+  prefs->fantasy_font_family_map[blink::web_pref::kCommonScript] =
+      u"Noto Serif";
+  prefs->serif_font_family_map[blink::web_pref::kCommonScript] =
+      u"Times New Roman";
+  prefs->standard_font_family_map[blink::web_pref::kCommonScript] =
+      u"Times New Roman";
 #endif
   prefs->fixed_font_family_map[blink::web_pref::kCommonScript] = u"Courier";
   prefs->sans_serif_font_family_map[blink::web_pref::kCommonScript] =
       u"Helvetica";
+  prefs->math_font_family_map[blink::web_pref::kCommonScript] =
+      u"STIX Two Math";
 }
 
 }  // namespace
