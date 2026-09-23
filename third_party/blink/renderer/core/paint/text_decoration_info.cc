@@ -172,6 +172,46 @@ TextDecorationFragmentContext ComputeTextDecorationFragmentContext(
   return fragment_context;
 }
 
+std::optional<gfx::RectF> ComputeUnderOverDecorationBounds(
+    const ComputedStyle& style,
+    const UsedFont& font,
+    LayoutUnit inline_size) {
+  DCHECK(style.HasAppliedTextDecorations());
+  if (!font.PrimaryFont()) {
+    return std::nullopt;
+  }
+  TextDecorationInfo decoration_info(
+      LineRelativeOffset(LayoutUnit(), LayoutUnit()), inline_size, style, font,
+      /*inline_context=*/nullptr, TextDecorationLine::kNone, Color());
+  TextDecorationOffset decoration_offset(style);
+  std::optional<gfx::RectF> bounds;
+  auto unite = [&bounds](const gfx::RectF& rect) {
+    if (bounds) {
+      bounds->UnionEvenIfEmpty(rect);
+    } else {
+      bounds = rect;
+    }
+  };
+  for (wtf_size_t i = 0; i < decoration_info.AppliedDecorationCount(); ++i) {
+    const ResolvedDecoration decoration =
+        decoration_info.ResolveDecorationAt(i);
+    if (!decoration.HasFontData()) {
+      continue;
+    }
+    if (decoration.HasUnderline()) {
+      unite(DecorationLinePainter::Bounds(
+          decoration_info.ComputeUnderlineLineData(decoration,
+                                                   decoration_offset)));
+    }
+    if (decoration.HasOverline()) {
+      unite(
+          DecorationLinePainter::Bounds(decoration_info.ComputeOverlineLineData(
+              decoration, decoration_offset)));
+    }
+  }
+  return bounds;
+}
+
 TextDecorationInfo::TextDecorationInfo(
     LineRelativeOffset local_origin,
     LayoutUnit width,
