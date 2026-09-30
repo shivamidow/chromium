@@ -175,8 +175,11 @@ TextDecorationFragmentContext ComputeTextDecorationFragmentContext(
 std::optional<gfx::RectF> ComputeUnderOverDecorationBounds(
     const ComputedStyle& style,
     const UsedFont& font,
-    LayoutUnit inline_size) {
+    LayoutUnit inline_size,
+    base::span<const UsedFont> over_side_fonts) {
   DCHECK(style.HasAppliedTextDecorations());
+  DCHECK(over_side_fonts.empty() ||
+         over_side_fonts.size() == style.AppliedTextDecorations().size());
   if (!font.PrimaryFont()) {
     return std::nullopt;
   }
@@ -206,10 +209,19 @@ std::optional<gfx::RectF> ComputeUnderOverDecorationBounds(
           decoration_info.ComputeUnderlineLineData(decoration,
                                                    decoration_offset)));
     }
+
     if (decoration.HasOverline()) {
-      unite(
-          DecorationLinePainter::Bounds(decoration_info.ComputeOverlineLineData(
-              decoration, decoration_offset)));
+      // The under side isn't resolved against `over_side_fonts`, because paint
+      // offsets it from the decorating box, which this function doesn't know.
+      const ResolvedDecoration over_side_decoration =
+          over_side_fonts.empty()
+              ? decoration
+              : decoration_info.ResolveDecorationAt(i, &over_side_fonts[i]);
+      if (over_side_decoration.HasFontData()) {
+        unite(DecorationLinePainter::Bounds(
+            decoration_info.ComputeOverlineLineData(over_side_decoration,
+                                                    decoration_offset)));
+      }
     }
   }
   return bounds;
@@ -346,8 +358,10 @@ const AppliedTextDecoration& TextDecorationInfo::AppliedDecoration(
 }
 
 const ResolvedDecoration TextDecorationInfo::ResolveDecorationAt(
-    wtf_size_t decoration_index) {
+    wtf_size_t decoration_index,
+    const UsedFont* used_font_override) {
   DCHECK_LT(decoration_index, AppliedDecorationCount());
+  DCHECK(!used_font_override || !inline_context_);
 
   ResolvedDecoration decoration(target_used_font_,
                                 AppliedDecoration(decoration_index));
@@ -411,6 +425,8 @@ const ResolvedDecoration TextDecorationInfo::ResolveDecorationAt(
 
   if (!is_svg_text_ && decorating_box) {
     decoration.used_font = decorating_box->GetUsedFont();
+  } else if (used_font_override) {
+    decoration.used_font = *used_font_override;
   } else {
     // `target_used_font_` was already copied to decoration.used_font.
   }

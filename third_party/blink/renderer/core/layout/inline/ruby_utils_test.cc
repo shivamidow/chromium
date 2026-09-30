@@ -139,7 +139,8 @@ TEST_F(RubyBlockPositionCalculatorTest, PlaceLinesTreePlacement) {
 
   RubyBlockPositionCalculator calculator;
   calculator.GroupLines(column_list);
-  calculator.PlaceLines(*line_items, FontHeight(LayoutUnit(10), LayoutUnit(4)));
+  calculator.PlaceLines(*line_items, FontHeight(LayoutUnit(10), LayoutUnit(4)),
+                        /*line_text_fit_scale=*/1.0f);
   EXPECT_EQ(2u, calculator.RubyLineListForTesting().size());
 }
 

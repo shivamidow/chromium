@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Ruby Test: an overline from a larger ancestor in vertical writing mode is sized by the base</title>
+<link rel="author" title="ChangSeok Oh" href="mailto:changseok@chromium.org">
+<link rel="help" href="https://drafts.csswg.org/css-ruby-1/#ruby-text-decoration">
+<link rel="help" href="https://drafts.csswg.org/css-text-decor-3/#decorating-box">
+<link rel="help" href="https://crbug.com/563435074">
+<meta name="assert" content="In vertical writing mode, Blink sizes the overline by the base's font, not by the decorating box (inline or block) twice its size, so the annotation doesn't move as far as with the larger overline on the base. The overline is transparent, so only the annotation position differs.">
+<script src="../../resources/ahem.js"></script>
+<style>
+.box {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  width: 200px;
+  height: 250px;
+  font: 40px/200px Ahem;
+}
+.big { font-size: 80px; }
+.base { font-size: 40px; }
+rt { font: 20px/1 Ahem; }
+.decorated {
+  text-decoration-line: overline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 25%;
+}
+</style>
+<div class="box"><span class="big decorated"><ruby class="base"><span>AA</span><rt>BBBB</rt></ruby></span></div>
+<div class="box big decorated"><ruby class="base"><span>AA</span><rt>BBBB</rt></ruby></div>

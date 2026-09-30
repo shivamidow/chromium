@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Ruby Test: an auto-thickness overline from a larger ancestor displaces the annotation by the ancestor's thickness</title>
+<link rel="author" title="ChangSeok Oh" href="mailto:changseok@chromium.org">
+<link rel="help" href="https://drafts.csswg.org/css-ruby-1/#ruby-text-decoration">
+<link rel="help" href="https://drafts.csswg.org/css-text-decor-4/#text-decoration-thickness-property">
+<link rel="help" href="https://github.com/w3c/csswg-drafts/issues/14544">
+<meta name="assert" content="With 'text-decoration-thickness: auto' and a decorating box (inline or block) twice the base's size, the annotation moves further than with the same overline on the base. The overline is transparent, so only the annotation position differs.">
+<script src="../../resources/ahem.js"></script>
+<style>
+.box { font: 40px/200px Ahem; }
+.big { font-size: 80px; }
+.base { font-size: 40px; }
+rt { font: 20px/1 Ahem; }
+.decorated {
+  text-decoration-line: overline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: auto;
+}
+</style>
+<div class="box"><span class="big decorated"><ruby class="base"><span>AA</span><rt>BBBB</rt></ruby></span></div>
+<div class="box big decorated"><ruby class="base"><span>AA</span><rt>BBBB</rt></ruby></div>

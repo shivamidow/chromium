@@ -416,7 +416,7 @@ void InlineLayoutAlgorithm::CreateLine(const LineLayoutOpportunity& opportunity,
       UpdateRubyColumnInlinePositions(*line_box, inline_size, column_list);
       RubyBlockPositionCalculator calculator;
       calculator.GroupLines(column_list)
-          .PlaceLines(*line_box, line_box_metrics)
+          .PlaceLines(*line_box, line_box_metrics, line_info->TextFitScale())
           .AddLinesTo(*line_container);
       annotation_metrics = calculator.AnnotationMetrics();
       calculator.UpdateColumnLayoutAnnotationMetrics(column_list);

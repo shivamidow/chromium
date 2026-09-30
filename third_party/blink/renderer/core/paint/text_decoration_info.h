@@ -7,6 +7,7 @@
 
 #include <optional>
 
+#include "base/containers/span.h"
 #include "base/types/strong_alias.h"
 #include "cc/paint/paint_record.h"
 #include "third_party/blink/renderer/core/core_export.h"
@@ -59,10 +60,16 @@ struct TextDecorationFragmentContext {
 CORE_EXPORT TextDecorationFragmentContext
 ComputeTextDecorationFragmentContext(const InlineCursor& cursor);
 
+// Returns the union of the bounds of the underlines and overlines of
+// `style.AppliedTextDecorations()`. `over_side_fonts`, if not empty, holds
+// the decorating box's font for each decoration and replaces `font` for
+// over-side lines only. Under-side lines also need their offset from the
+// decorating box, which is unknown at layout time.
 CORE_EXPORT std::optional<gfx::RectF> ComputeUnderOverDecorationBounds(
     const ComputedStyle& style,
     const UsedFont& font,
-    LayoutUnit inline_size);
+    LayoutUnit inline_size,
+    base::span<const UsedFont> over_side_fonts);
 
 // Holds the resolved metrics and styling for a single AppliedTextDecoration.
 // This immutable structure decouples index-specific properties from the overall
@@ -144,7 +151,13 @@ class CORE_EXPORT TextDecorationInfo {
   //
   // The index must be a valid index the AppliedTextDecorations contained within
   // the style passed at construction.
-  const ResolvedDecoration ResolveDecorationAt(wtf_size_t decoration_index);
+  //
+  // `used_font_override` replaces the target font the same way the font of a
+  // decorating box does. It is for layout, where there is no
+  // `InlinePaintContext` to find the decorating box from.
+  const ResolvedDecoration ResolveDecorationAt(
+      wtf_size_t decoration_index,
+      const UsedFont* used_font_override = nullptr);
 
   // Creates a DecorationGeometry for one of the text decoration lines: over,
   // under, line-through, or spelling/grammar error. It's necessary to paint

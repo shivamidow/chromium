@@ -246,10 +246,12 @@ class CORE_EXPORT RubyBlockPositionCalculator {
       const HeapVector<Member<LogicalRubyColumn>>& column_list);
 
   // Update block offset values of annotation LogicalRubyColumns. This must be
-  // called after GroupLines().
+  // called after GroupLines(). `line_text_fit_scale` is the `text-fit` scale
+  // of the line box.
   RubyBlockPositionCalculator& PlaceLines(
       const LogicalLineItems& base_line_items,
-      const FontHeight& line_box_metrics);
+      const FontHeight& line_box_metrics,
+      float line_text_fit_scale);
 
   // Associate annotation lines to the specified line container. This must be
   // called after PlaceLines().
@@ -296,6 +298,10 @@ class CORE_EXPORT RubyBlockPositionCalculator {
   // zero if there are no higher/lower annotations.  This is available after
   // PlaceLines().
   FontHeight annotation_metrics_ = FontHeight::Empty();
+
+  // The `text-fit` scale of the line box, which paint applies to the font of
+  // the decorations of the containing block. This is set by PlaceLines().
+  float line_text_fit_scale_ = 1.0f;
 };
 
 }  // namespace blink

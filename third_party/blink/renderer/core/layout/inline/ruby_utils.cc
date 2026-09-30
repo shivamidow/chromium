@@ -15,8 +15,11 @@
 #include "third_party/blink/renderer/core/layout/inline/logical_line_container.h"
 #include "third_party/blink/renderer/core/layout/inline/logical_line_item.h"
 #include "third_party/blink/renderer/core/layout/inline/used_font.h"
+#include "third_party/blink/renderer/core/layout/layout_inline.h"
 #include "third_party/blink/renderer/core/layout/layout_object_inlines.h"
+#include "third_party/blink/renderer/core/layout/layout_text.h"
 #include "third_party/blink/renderer/core/layout/physical_box_fragment.h"
+#include "third_party/blink/renderer/core/layout/style_variant.h"
 #include "third_party/blink/renderer/core/paint/text_decoration_info.h"
 #include "third_party/blink/renderer/platform/fonts/font_height.h"
 #include "third_party/blink/renderer/platform/fonts/shaping/han_kerning.h"
@@ -931,10 +934,85 @@ FontHeight ComputeLogicalLineEmHeight(const LogicalLineItems& line_items,
   return height;
 }
 
+StyleVariant GetStyleVariant(const LogicalLineItem& item) {
+  if (const auto* fragment = item.GetPhysicalFragment()) {
+    return fragment->GetStyleVariant();
+  }
+  if (item.inline_item) {
+    return item.inline_item->GetStyleVariant();
+  }
+  return StyleVariant::kStandard;
+}
+
+// Returns the font of the decorating box of each of the
+// `AppliedTextDecorations()` of `item`, or an empty vector if it can't be
+// determined.
+HeapVector<UsedFont, 4> ComputeDecoratingBoxFonts(const LogicalLineItem& item,
+                                                  float line_text_fit_scale) {
+  const LayoutObject* layout_object = item.GetLayoutObject();
+  const ComputedStyle* style = item.Style();
+  if (!layout_object || !style) {
+    return {};
+  }
+  const StyleVariant style_variant =
+      ToParentStyleVariant(GetStyleVariant(item));
+  const AppliedTextDecorationVector* decorations =
+      &style->AppliedTextDecorations();
+
+  // The inline capacity matches `InlinePaintContext::DecoratingBoxList`, which
+  // holds the same per-decoration list at paint time. Text rarely has more than
+  // a couple of decorations, so this avoids a heap allocation for each item.
+  HeapVector<UsedFont, 4> fonts(decorations->size(), item.GetUsedFont());
+  auto set_fonts = [&fonts](wtf_size_t begin, wtf_size_t end,
+                            const ComputedStyle& box_style, float scale) {
+    // Paint doesn't use the decorating box in vertical writing modes.
+    if (!box_style.IsHorizontalWritingMode()) {
+      return;
+    }
+    for (wtf_size_t i = begin; i < end; ++i) {
+      fonts[i] = UsedFont(*box_style.GetFont(), scale);
+    }
+  };
+
+  do {
+    const LayoutObject* parent = layout_object->Parent();
+    if (!parent) [[unlikely]] {
+      return {};
+    }
+
+    const ComputedStyle& parent_style = parent->EffectiveStyle(style_variant);
+    const AppliedTextDecorationVector& parent_decorations =
+        parent_style.AppliedTextDecorations();
+
+    if (decorations != &parent_decorations) {
+      if (decorations->size() > parent_decorations.size()) {
+        set_fonts(parent_decorations.size(), decorations->size(), *style, 1.0f);
+      } else if (decorations->size() != parent_decorations.size() ||
+                 (style->GetTextDecorationLine() != TextDecorationLine::kNone &&
+                  !IsA<LayoutText>(layout_object))) {
+        // The propagation was stopped, and paint resets the decorating boxes.
+        // It doesn't happen within an inline formatting context in practice.
+        return {};
+      }
+    }
+
+    layout_object = parent;
+    style = &parent_style;
+    decorations = &parent_decorations;
+  } while (IsA<LayoutInline>(layout_object));
+
+  // `layout_object` is now the containing block, whose decorations belong to
+  // the line box.
+  set_fonts(0, decorations->size(), *style, line_text_fit_scale);
+  return fonts;
+}
+
 FontHeight ComputeBaseDecorationExtent(const LogicalLineItems& line_items,
-                                       const Vector<wtf_size_t>& index_list) {
+                                       const Vector<wtf_size_t>& index_list,
+                                       float line_text_fit_scale) {
   FontHeight extent;
-  auto accumulate = [&extent](const LogicalLineItem& item) {
+  auto accumulate = [&extent,
+                     line_text_fit_scale](const LogicalLineItem& item) {
     if (!item.HasInFlowFragment()) {
       return;
     }
@@ -946,7 +1024,8 @@ FontHeight ComputeBaseDecorationExtent(const LogicalLineItems& line_items,
 
     const UsedFont used_font = item.GetUsedFont();
     const std::optional<gfx::RectF> bounds = ComputeUnderOverDecorationBounds(
-        *style, used_font, item.rect.size.inline_size);
+        *style, used_font, item.rect.size.inline_size,
+        ComputeDecoratingBoxFonts(item, line_text_fit_scale));
     if (!bounds) {
       return;
     }
@@ -1113,9 +1192,11 @@ RubyBlockPositionCalculator::EnsureRubyLine(const RubyLevel& level) {
 
 RubyBlockPositionCalculator& RubyBlockPositionCalculator::PlaceLines(
     const LogicalLineItems& base_line_items,
-    const FontHeight& line_box_metrics) {
+    const FontHeight& line_box_metrics,
+    float line_text_fit_scale) {
   DCHECK(!ruby_lines_.empty()) << "This must be called after GroupLines().";
   annotation_metrics_ = FontHeight();
+  line_text_fit_scale_ = line_text_fit_scale;
 
   RubyLine* root = BuildTree();
   CHECK(root);
@@ -1292,10 +1373,12 @@ FontHeight RubyBlockPositionCalculator::ComputeRelativeOffsets(
       node.IsBaseLevel()) {
     if (!node.OverChildren().empty()) {
       decoration_extent = ComputeBaseDecorationExtent(
-          base_line_items, node.OverChildren().front()->BaseIndexList());
+          base_line_items, node.OverChildren().front()->BaseIndexList(),
+          line_text_fit_scale_);
     } else if (!node.UnderChildren().empty()) {
       decoration_extent = ComputeBaseDecorationExtent(
-          base_line_items, node.UnderChildren().front()->BaseIndexList());
+          base_line_items, node.UnderChildren().front()->BaseIndexList(),
+          line_text_fit_scale_);
     }
   }
 

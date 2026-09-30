@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Ruby Reference: a ruby base with an overline sized by the larger ancestor, vertical writing mode</title>
+<link rel="author" title="ChangSeok Oh" href="mailto:changseok@chromium.org">
+<script src="../../resources/ahem.js"></script>
+<style>
+.box {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  width: 200px;
+  height: 250px;
+  font: 40px/200px Ahem;
+}
+.big { font-size: 80px; }
+.base { font-size: 40px; }
+rt { font: 20px/1 Ahem; }
+/* 25% of the 80px ancestor. */
+.decorated {
+  text-decoration-line: overline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 20px;
+}
+</style>
+<div class="box"><span class="big"><ruby class="base"><span class="decorated">AA</span><rt>BBBB</rt></ruby></span></div>
+<div class="box big"><ruby class="base"><span class="decorated">AA</span><rt>BBBB</rt></ruby></div>
